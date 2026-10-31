@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SmartSplit – Budget-first food ordering (concept prototype)</title>
+<style>
+:root{--bg:#FBF7F2;--card:#fff;--ink:#231F1B;--mute:#6B625A;--line:#EEE4D8;--acc:#CF4F16;--accd:#B0430F;--accl:#FDEBDD;--ok:#1B6E45;--okl:#E3F4EA;--bad:#B42318;--badl:#FDE8E6;--r:16px;--sh:0 1px 2px rgba(35,31,27,.05),0 6px 18px rgba(35,31,27,.06)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:hidden}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid #2457D6;outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.strip{background:#F3E9DC;color:#5A4A3C;font-size:12.5px;text-align:center;padding:7px 12px;border-bottom:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:10px;max-width:1080px;margin:0 auto;padding:14px 16px 0}
+.logo{width:32px;height:32px;border-radius:9px;background:var(--acc);display:grid;place-items:center}
+.brand{font-weight:700;font-size:18px;letter-spacing:-.2px}
+.tagc{margin-left:auto;font-size:12px;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:3px 10px;background:#fff}
+.wrap{max-width:1080px;margin:0 auto;padding:16px}
+.narrow{max-width:540px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh);padding:20px}
+h1{margin:0;font-size:26px;line-height:1.2;letter-spacing:-.4px}
+h1:focus{outline:none}
+.h2{font-size:22px}
+.eyebrow{margin:0 0 6px;color:var(--acc);font-weight:600;font-size:13px}
+.lead,.sub{color:var(--mute);margin:6px 0 0}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0 8px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:10px 18px;font-weight:600;transition:.15s}
+.chip:hover{border-color:var(--acc)}
+.chip.on{background:var(--accl);border-color:var(--acc);color:var(--accd)}
+.chip.sm{padding:7px 14px;font-size:14px}
+.chip.sort{margin-left:auto}
+label.fl{display:block;font-weight:600;font-size:14px;margin:12px 0 6px}
+input.in{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff}
+.hint{min-height:22px;font-size:14px;color:var(--mute);margin:8px 0 14px}
+.hint.err{color:var(--bad)}
+.btn{display:block;width:100%;border:0;border-radius:12px;background:var(--acc);color:#fff;font-weight:700;padding:14px 18px;transition:.15s}
+.btn:hover{background:var(--accd)}
+.btn:disabled{background:#D9CFC5;color:#7B7168;cursor:not-allowed}
+.btn.sec{background:#fff;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sec:hover{border-color:var(--acc);background:#fff}
+.btn.danger{color:var(--bad)}
+.incl{list-style:none;margin:20px 0 0;padding:16px 0 0;border-top:1px solid var(--line);font-size:14px;color:var(--mute)}
+.incl li{display:flex;justify-content:space-between;gap:12px;padding:4px 0}
+.incl b{color:var(--ink);font-weight:600;white-space:nowrap}
+.bar-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:16px}
+.pill{border:1px solid var(--line);background:#fff;border-radius:99px;padding:8px 14px;font-weight:600;font-size:14px;white-space:nowrap;box-shadow:var(--sh)}
+.pill u{color:var(--acc);font-weight:500;margin-left:4px}
+.layout main,.layout aside{min-width:0}
+.find{margin-bottom:16px}
+.find p{margin:4px 0 14px;color:var(--mute);font-size:14px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
+.grid{display:grid;gap:12px;grid-template-columns:1fr}
+.item{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:10px;box-shadow:var(--sh);min-width:0}
+.thumb{flex:0 0 84px;height:84px;border-radius:12px;display:grid;place-items:center}
+.thumb svg{width:50px;height:50px}
+.ln{fill:none;stroke:currentColor;stroke-width:2.5;stroke-linecap:round}
+.info{flex:1;min-width:0;display:flex;flex-direction:column}
+.nm{font-weight:600;display:flex;gap:7px;align-items:flex-start;line-height:1.25}
+.info p{margin:3px 0 8px;font-size:13px;color:var(--mute)}
+.ir{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.vd{flex:0 0 14px;height:14px;margin-top:3px;border:1.5px solid;border-radius:3px;display:grid;place-items:center}
+.vd::after{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.vd.v{color:#1B8A4B}.vd.n{color:#B42318}
+.add{border:1.5px solid var(--acc);background:#fff;color:var(--acc);font-weight:700;border-radius:10px;padding:6px 20px}
+.add:hover{background:var(--accl)}
+.qty{display:inline-flex;align-items:center;background:var(--acc);border-radius:10px;color:#fff}
+.qty button{border:0;background:none;color:#fff;width:34px;height:34px;font-size:18px;font-weight:700}
+.qty button:disabled{opacity:.5;cursor:not-allowed}
+.qty span{min-width:22px;text-align:center;font-weight:700}
+.rec{border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:12px;background:#FFFCF9}
+.rh{display:flex;justify-content:space-between;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{font-size:12px;font-weight:600;border-radius:99px;padding:3px 10px}
+.tag.ok{background:var(--okl);color:var(--ok)}
+.rec ul{margin:8px 0;padding-left:18px;font-size:14px}
+.why{font-size:13px;color:var(--mute);margin:6px 0 10px}
+.rf{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.rf .btn{width:auto;padding:9px 16px;font-size:14px}
+.alert{border-radius:12px;padding:12px 14px;font-size:14px;margin-top:12px}
+.alert.bad{background:var(--badl);color:#7A1A12}
+.alert.ok{background:var(--okl);color:#14573A}
+.alert .acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.alert .acts .btn{width:auto;padding:8px 14px;font-size:14px}
+.tracker .th{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.lbl{font-size:12px;color:var(--mute);text-transform:uppercase;letter-spacing:.5px;display:block}
+.tot{font-size:24px;letter-spacing:-.4px}
+.of{color:var(--mute);font-size:14px}
+.tog{border:0;background:none;color:var(--acc);font-weight:600;font-size:14px;padding:6px 0}
+.meter{height:8px;border-radius:9px;background:#F0E7DC;overflow:hidden;margin:10px 0 8px}
+.meter i{display:block;height:100%;background:var(--ok);border-radius:9px;transition:width .25s,background .25s}
+.meter.over i{background:var(--bad)}
+.st{margin:0 0 10px;font-size:14px;font-weight:600}
+.st.ok{color:var(--ok)}.st.bad{color:var(--bad)}.st.idle{color:var(--mute);font-weight:500}
+.fees{font-size:14px;margin:6px 0 12px}
+.fr{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.fr small{display:block;color:var(--mute);font-size:12px}
+.fr.t{border:0;font-weight:700;font-size:16px;padding-top:10px}
+.crow{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.crow:last-child{border:0}
+.crow .nm{flex:1}
+.stack{display:grid;gap:10px;margin-top:16px}
+.empty{text-align:center;padding:28px 10px;color:var(--mute)}
+.empty svg{width:44px;height:44px;color:#CDBFAF;margin-bottom:6px}
+.check{width:60px;height:60px;border-radius:50%;background:var(--okl);color:var(--ok);display:grid;place-items:center;margin:0 auto 12px}
+.center{text-align:center}
+.foot{max-width:1080px;margin:8px auto 24px;padding:0 16px;font-size:12px;color:var(--mute);text-align:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:#2B2520;color:#fff;padding:11px 16px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:40;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.err{background:var(--bad)}
+.screen{animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media(min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+@media(max-width:959px){
+ .tracker{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -8px 24px rgba(35,31,27,.1);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:20}
+ .tracker .tr-fees{display:none}.tracker.open .tr-fees{display:block}
+ body.has-bar .wrap{padding-bottom:190px}
+ body.has-bar .toast{bottom:200px}
+}
+@media(min-width:960px){
+ .layout{display:grid;grid-template-columns:1fr 360px;gap:28px;align-items:start}
+ .tracker{position:sticky;top:16px;background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--sh)}
+ .tog{display:none}
+ h1{font-size:30px}.h2{font-size:24px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="strip">Independent concept prototype — not an official Swiggy product.</div>
+<div class="top"><div class="logo" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M4 12h16M12 4v16"/><circle cx="12" cy="12" r="8.5"/></svg></div><span class="brand">SmartSplit</span><span class="tagc">Concept demo</span></div>
+<div id="app" class="screen"></div>
+<p class="foot">All restaurants, menu items, prices and charges are fictional demo data. No real order or payment is ever made.</p>
+<div id="live" class="sr" aria-live="polite"></div>
+<div id="toast" class="toast" role="status"></div>
+
+<script>
+"use strict";
+(function(){
+const ITEMS=[
+ {id:"pbm",name:"Paneer Butter Masala Bowl",desc:"Creamy tomato gravy with jeera rice",price:149,cat:"Meals",veg:true,icon:"bowl",bg:"#FBE3C8",fg:"#B4540F"},
+ {id:"bir",name:"Chicken Dum Biryani",desc:"Basmati, slow-cooked, with raita",price:179,cat:"Meals",veg:false,icon:"bowl",bg:"#F8DCCB",fg:"#A8431B"},
+ {id:"dos",name:"Masala Dosa",desc:"Crisp rice crepe, potato filling, chutneys",price:89,cat:"Meals",veg:true,icon:"plate",bg:"#F6EAC4",fg:"#9A7410"},
+ {id:"sam",name:"Punjabi Samosa (2 pcs)",desc:"Spiced potato and peas, mint chutney",price:39,cat:"Snacks",veg:true,icon:"snack",bg:"#F5E1C2",fg:"#A5600F"},
+ {id:"cha",name:"Masala Chai",desc:"Ginger and cardamom, served hot",price:25,cat:"Beverages",veg:true,icon:"cup",bg:"#EEDCC9",fg:"#7C4A22"},
+ {id:"las",name:"Sweet Lassi",desc:"Thick chilled yoghurt drink",price:59,cat:"Beverages",veg:true,icon:"glass",bg:"#F6E8DD",fg:"#B25A33"}
+];
+const ICONS={
+ bowl:'<path d="M6 24h36a18 16 0 0 1-36 0z"/><path class="ln" d="M17 17c0-3 3-3 3-7m5 7c0-3 3-3 3-7m5 7c0-3 3-3 3-7"/>',
+ plate:'<ellipse cx="24" cy="31" rx="20" ry="7"/><path d="M6 28C14 10 34 10 42 28z" opacity=".55"/>',
+ snack:'<path d="M24 8 42 38H6z"/><path d="M24 8 42 38H6z" opacity=".4" transform="translate(0 4) scale(.9) translate(2.7 0)"/>',
+ cup:'<path d="M10 18h22v10a11 11 0 0 1-22 0z"/><path class="ln" d="M32 21h4a5 5 0 0 1 0 10h-4"/><path class="ln" d="M16 14c0-3 3-3 3-6m5 6c0-3 3-3 3-6"/>',
+ glass:'<path d="M13 8h22l-3 32H16z"/><path d="M14.2 14h19.6l-.6 7H14.8z" fill="#fff" opacity=".45"/>'
+};
+const CATS=["All","Meals","Snacks","Beverages"];
+const FEE={rate:0.05,del:25,plat:5};
+const MAXQ=9,MIN_B=50,MAX_B=5000;
+const $=s=>document.querySelector(s);
+const money=n=>"₹"+Math.round(n).toLocaleString("en-IN");
+const byId=id=>ITEMS.find(i=>i.id===id);
+const S={screen:"setup",sel:250,custom:"",budget:250,cart:{},filter:"All",sortLow:false,sheet:false,recs:null,order:null};
+
+/* ---------- pricing (single source of truth) ---------- */
+function calc(cart){
+ let sub=0,count=0;
+ for(const id in cart){const it=byId(id);if(!it)continue;const q=cart[id];if(!Number.isInteger(q)||q<1)continue;sub+=q*it.price;count+=q}
+ if(!count)return{sub:0,tax:0,del:0,plat:0,total:0,count:0};
+ const tax=Math.round(sub*FEE.rate);
+ return{sub,tax,del:FEE.del,plat:FEE.plat,total:sub+tax+FEE.del+FEE.plat,count};
+}
+function maxFood(b){let s=b;while(s>0&&s+Math.round(s*FEE.rate)+FEE.del+FEE.plat>b)s--;return Math.max(s,0)}
+const ceil10=n=>Math.ceil(n/10)*10;
+const fits=t=>t.count>0&&t.total<=S.budget;
+
+/* ---------- recommendation: exhaustive search ---------- */
+function recommend(b){
+ const all=[],q=[];
+ (function walk(i){
+  if(i===ITEMS.length){
+   const cart={};let n=0;
+   ITEMS.forEach((it,k)=>{if(q[k]){cart[it.id]=q[k];n+=q[k]}});
+   if(n<1||n>5)return;
+   const t=calc(cart);if(t.total>b)return;
+   const ids=Object.keys(cart);
+   all.push({cart,t,n,kinds:ids.length,meal:ids.some(x=>byId(x).cat==="Meals"),drink:ids.some(x=>byId(x).cat==="Beverages")});
+   return;
+  }
+  for(let v=0;v<=2;v++){q[i]=v;walk(i+1)}
+ })(0);
+ const used=new Set(),list=[];
+ const key=x=>JSON.stringify(x.cart);
+ const pick=(label,cmp)=>{const c=all.slice().sort(cmp).find(x=>!used.has(key(x)));if(c){used.add(key(c));c.label=label;list.push(c)}};
+ const score=x=>x.kinds*10+(x.meal?12:0)+(x.drink?8:0)+x.t.total/b*10-(x.n-x.kinds)*3;
+ pick("Balanced meal",(a,c)=>score(c)-score(a));
+ pick("Most food for your budget",(a,c)=>c.t.sub-a.t.sub||c.kinds-a.kinds);
+ pick("Light and low-cost",(a,c)=>((a.n<2)-(c.n<2))||((c.meal&&c.drink)-(a.meal&&a.drink))||a.t.total-c.t.total||c.kinds-a.kinds);
+ const minTotal=Math.min(...ITEMS.map(i=>calc({[i.id]:1}).total));
+ const meals=ITEMS.filter(i=>i.cat==="Meals"),bevs=ITEMS.filter(i=>i.cat==="Beverages");
+ const cm=meals.reduce((a,c)=>c.price<a.price?c:a),cb=bevs.reduce((a,c)=>c.price<a.price?c:a);
+ const cheapest=ITEMS.reduce((a,c)=>c.price<a.price?c:a);
+ return{budget:b,list,minTotal,cheapest,suggest:ceil10(calc({[cm.id]:1,[cb.id]:1}).total)};
+}
+function why(r){
+ const t=r.t,sp=S.budget-t.total;
+ return `${money(t.total)} all-in: ${money(t.sub)} food plus ${money(t.total-t.sub)} in taxes and fees, leaving ${money(sp)} spare. ${r.kinds} different item${r.kinds>1?"s":""}${r.meal&&r.drink?", including a main and a drink":r.meal?", including a main":""}.`;
+}
+
+/* ---------- view helpers ---------- */
+const svg=it=>`<svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true" style="color:${it.fg}">${ICONS[it.icon]}</svg>`;
+const vdot=it=>`<span class="vd ${it.veg?"v":"n"}" role="img" aria-label="${it.veg?"Vegetarian":"Non-vegetarian"}" title="${it.veg?"Vegetarian":"Non-vegetarian"}"></span>`;
+function qtyV(it,q){
+ if(!q)return `<button class="add" data-a="inc" data-id="${it.id}" data-k="inc-${it.id}" aria-label="Add ${it.name} to cart">Add</button>`;
+ return `<div class="qty" role="group" aria-label="Quantity of ${it.name}"><button data-a="dec" data-id="${it.id}" data-k="dec-${it.id}" aria-label="Remove one ${it.name}">&minus;</button><span aria-label="${q} in cart">${q}</span><button data-a="inc" data-id="${it.id}" data-k="inc-${it.id}" aria-label="Add one more ${it.name}" ${q>=MAXQ?"disabled":""}>+</button></div>`;
+}
+function itemV(it){
+ return `<article class="item"><div class="thumb" style="background:${it.bg}">${svg(it)}</div><div class="info"><div class="nm">${vdot(it)}<span>${it.name}</span></div><p>${it.desc}</p><div class="ir"><b>${money(it.price)}</b>${qtyV(it,S.cart[it.id]||0)}</div></div></article>`;
+}
+const fr=(l,v,n,c)=>`<div class="fr ${c||""}"><span>${l}${n?`<small>${n}</small>`:""}</span><b>${money(v)}</b></div>`;
+function feesV(t){
+ return `<div class="fees">${fr("Food subtotal",t.sub,"Menu prices × quantity")}${fr("GST estimate (5%)",t.tax,"5% of food subtotal, rounded to nearest ₹")}${fr("Delivery fee",t.del,"Flat ₹25 per order")}${fr("Platform fee",t.plat,"Flat ₹5 per order")}${fr("Final total",t.total,"","t")}${t.count?"":`<small style="color:var(--mute)">Flat fees apply once you add an item.</small>`}</div>`;
+}
+function statusInfo(t){
+ if(!t.count)return{c:"idle",txt:"Add items to see your total against your budget."};
+ if(fits(t))return{c:"ok",txt:`Within budget. ${money(S.budget-t.total)} left.`};
+ return{c:"bad",txt:`Over budget by ${money(t.total-S.budget)}. Remove items or raise your budget.`};
+}
+function trackerV(t){
+ const st=statusInfo(t),pct=Math.min(100,S.budget?t.total/S.budget*100:0);
+ return `<aside class="tracker${S.sheet?" open":""}" aria-label="Budget tracker"><div class="th"><div><span class="lbl">Total incl. all charges</span><b class="tot">${money(t.total)}</b> <span class="of">of ${money(S.budget)}</span></div><button class="tog" data-a="sheet" data-k="tog" aria-expanded="${S.sheet}">${S.sheet?"Hide":"Show"} breakdown</button></div><div class="meter${t.total>S.budget?" over":""}" role="progressbar" aria-label="Budget used" aria-valuemin="0" aria-valuemax="${S.budget}" aria-valuenow="${t.total}"><i style="width:${pct}%"></i></div><p class="st ${st.c}">${st.txt}</p><div class="tr-fees">${feesV(t)}</div><button class="btn" data-a="cart" data-k="tocart" ${t.count?"":"disabled"}>View cart and checkout</button></aside>`;
+}
+function findV(){
+ const R=S.recs;let out="";
+ if(R){
+  if(R.list.length){
+   out=R.list.map((r,i)=>`<div class="rec"><div class="rh"><b>${r.label}</b><span class="tag ok">Fits · ${money(S.budget-r.t.total)} left</span></div><ul>${Object.keys(r.cart).map(id=>`<li>${r.cart[id]} × ${byId(id).name} (${money(r.cart[id]*byId(id).price)})</li>`).join("")}</ul><p class="why">${why(r)}</p><div class="rf"><span>Total <b>${money(r.t.total)}</b></span><button class="btn" data-a="apply" data-i="${i}" data-k="apply-${i}">Add to cart</button></div></div>`).join("");
+  }else{
+   out=`<div class="alert bad" role="alert"><b>No combination fits ${money(R.budget)}.</b> Even the lowest-priced item (${R.cheapest.name}, ${money(R.cheapest.price)}) costs ${money(R.minTotal)} once ${money(FEE.del+FEE.plat)} of fixed delivery and platform fees are added. A main plus a drink needs about ${money(R.suggest)}.<div class="acts"><button class="btn" data-a="raise" data-v="${R.suggest}" data-k="raise">Raise budget to ${money(R.suggest)}</button><button class="btn sec" data-a="sort" data-k="sort2">Show lowest-priced first</button></div></div>`;
+  }
+ }
+ return `<section class="card find" id="find"><b>Not sure what fits?</b><p>SmartSplit checks every mix of up to 5 items (max 2 of each) and shows only what fits your ${money(S.budget)} budget after all charges. It is a simple budget-matching search, not an AI model.</p><button class="btn" data-a="find" data-k="find">Find a combination within my budget</button>${out}</section>`;
+}
+
+/* ---------- screens ---------- */
+function setupV(){
+ const opts=[150,250,350,"custom"];
+ return `<div class="wrap narrow screen"><div class="card"><p class="eyebrow">Budget-first ordering</p><h1 tabindex="-1">What is your total budget?</h1><p class="lead">Set one number. It covers everything you pay: food, taxes, delivery and platform fee. No surprises at checkout.</p><div class="chips" role="radiogroup" aria-label="Choose a budget">${opts.map(o=>`<button class="chip${S.sel===o?" on":""}" role="radio" aria-checked="${S.sel===o}" data-a="pick" data-v="${o}" data-k="p-${o}">${o==="custom"?"Custom":money(o)}</button>`).join("")}</div>${S.sel==="custom"?`<label class="fl" for="cust">Custom amount in ₹ (${money(MIN_B)} to ${money(MAX_B)})</label><input id="cust" class="in" inputmode="numeric" autocomplete="off" placeholder="e.g. 300" value="${S.custom}">`:""}<p id="hint" class="hint" aria-live="polite"></p><button id="build" class="btn" data-a="build" data-k="build">Build my meal</button><ul class="incl" aria-label="What your budget includes"><li><span>Food</span><b>Menu prices</b></li><li><span>GST estimate</span><b>5% of food</b></li><li><span>Delivery fee</span><b>₹25 flat</b></li><li><span>Platform fee</span><b>₹5 flat</b></li></ul></div></div>`;
+}
+function menuV(){
+ const t=calc(S.cart);
+ let items=ITEMS.filter(i=>S.filter==="All"||i.cat===S.filter);
+ if(S.sortLow)items=items.slice().sort((a,b)=>a.price-b.price);
+ return `<div class="wrap screen"><div class="bar-top"><div><h1 class="h2" tabindex="-1">Build your meal</h1><p class="sub">Your total is checked against your budget as you go.</p></div><button class="pill" data-a="setup" data-k="chg" aria-label="Change budget, currently ${money(S.budget)}">${money(S.budget)} budget <u>Change</u></button></div><div class="layout"><main>${findV()}<div class="filters" role="group" aria-label="Filter menu">${CATS.map(c=>`<button class="chip sm${S.filter===c?" on":""}" aria-pressed="${S.filter===c}" data-a="filter" data-v="${c}" data-k="f-${c}">${c}</button>`).join("")}<button class="chip sm sort${S.sortLow?" on":""}" aria-pressed="${S.sortLow}" data-a="sort" data-k="sort">Lowest price first</button></div><div class="grid">${items.map(itemV).join("")}</div></main>${trackerV(t)}</div></div>`;
+}
+function cartV(){
+ const t=calc(S.cart),ids=Object.keys(S.cart);
+ const over=t.count&&!fits(t);
+ let block="";
+ if(!t.count)block="Add at least one item to continue.";
+ else if(over)block=`Checkout is blocked: your total is ${money(t.total-S.budget)} over budget.`;
+ const rows=ids.map(id=>{const it=byId(id),q=S.cart[id];return `<div class="crow"><div class="nm">${vdot(it)}<span>${it.name}<br><small style="color:var(--mute);font-weight:400">${money(it.price)} each · ${money(it.price*q)}</small></span></div>${qtyV(it,q)}</div>`}).join("");
+ const st=statusInfo(t);
+ return `<div class="wrap narrow screen"><h1 class="h2" tabindex="-1">Your cart</h1><p class="sub">Budget: ${money(S.budget)} <button class="pill" style="padding:3px 10px;margin-left:6px" data-a="setup" data-k="chg">Change</button></p>
+${t.count?`<div class="card" style="margin-top:14px">${rows}</div>`:`<div class="card empty" style="margin-top:14px"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 10h6l5 22h20l4-16H14"/><circle cx="19" cy="40" r="2.5"/><circle cx="35" cy="40" r="2.5"/></svg><p style="margin:0"><b>Your cart is empty</b><br>Pick something from the menu or let SmartSplit find a combination.</p></div>`}
+<div class="card" style="margin-top:12px"><div class="th"><b>Bill details</b></div>${feesV(t)}<p class="st ${st.c}" role="status">${st.txt}</p>
+${over?`<div class="alert bad" role="alert"><b>This order does not fit your budget.</b><div class="acts"><button class="btn" data-a="raise" data-v="${ceil10(t.total)}" data-k="raise">Raise budget to ${money(ceil10(t.total))}</button><button class="btn sec" data-a="findcart" data-k="findc">Find a combination</button></div></div>`:""}
+${t.count&&!over?`<div class="alert ok">Payable amount <b>${money(t.total)}</b> is within your ${money(S.budget)} budget.</div>`:""}</div>
+<div class="stack"><button class="btn" data-a="checkout" data-k="co" ${block?"disabled":""}>Continue to demo checkout · ${money(t.total)}</button>${block?`<p class="hint err" style="margin:0" role="status">${block}</p>`:""}<button class="btn sec" data-a="menu" data-k="edit">Edit cart (back to menu)</button><button class="btn sec danger" data-a="clear" data-k="clr" ${t.count?"":"disabled"}>Clear cart</button></div></div>`;
+}
+function doneV(){
+ const o=S.order||{cart:{},t:calc({}),budget:S.budget};
+ return `<div class="wrap narrow screen"><div class="card center"><div class="check" aria-hidden="true"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg></div><h1 class="h2" tabindex="-1">Demo checkout complete</h1><p class="lead">This is a demonstration only. No real order was placed and no payment was taken.</p><div style="text-align:left;margin-top:16px">${Object.keys(o.cart).map(id=>`<div class="fr"><span>${o.cart[id]} × ${byId(id).name}</span><b>${money(o.cart[id]*byId(id).price)}</b></div>`).join("")}${feesV(o.t)}<div class="alert ok">Paid ${money(o.t.total)} of your ${money(o.budget)} budget in this simulation. ${money(o.budget-o.t.total)} left.</div></div><div class="stack"><button class="btn" data-a="newmenu" data-k="back">Back to menu</button><button class="btn sec" data-a="newsetup" data-k="again">Start with a new budget</button></div></div></div>`;
+}
+
+/* ---------- render + state ---------- */
+function render(){
+ const prev=document.activeElement&&document.activeElement.dataset?document.activeElement.dataset.k:null;
+ $("#app").innerHTML=({setup:setupV,menu:menuV,cart:cartV,done:doneV})[S.screen]();
+ document.body.classList.toggle("has-bar",S.screen==="menu");
+ if(prev){
+  let el=document.querySelector(`[data-k="${prev}"]`);
+  if(!el||el.disabled){const m=/^dec-(.+)$/.exec(prev);if(m)el=document.querySelector(`[data-k="inc-${m[1]}"]`)}
+  if(el&&!el.disabled)el.focus({preventScroll:true});
+ }
+ if(S.screen==="setup")updSetup();
+ if(S.screen==="menu"||S.screen==="cart"){const t=calc(S.cart);$("#live").textContent=`Total ${money(t.total)}. ${statusInfo(t).txt}`}
+}
+function go(s){S.screen=s;S.sheet=false;render();window.scrollTo(0,0);const h=document.querySelector("h1");if(h)h.focus({preventScroll:true})}
+let tt;
+function toast(msg,err){const el=$("#toast");el.textContent=msg;el.className="toast show"+(err?" err":"");clearTimeout(tt);tt=setTimeout(()=>{el.className="toast"},3200)}
+function draft(){
+ if(S.sel!=="custom")return S.sel;
+ if(!/^\d+$/.test(S.custom))return null;
+ const v=+S.custom;return v>=MIN_B&&v<=MAX_B?v:null;
+}
+function updSetup(){
+ const h=$("#hint"),b=$("#build");if(!h||!b)return;
+ const d=draft();
+ if(d===null){h.className="hint"+(S.custom?" err":"");h.textContent=S.custom?`Enter a whole number from ${money(MIN_B)} to ${money(MAX_B)}.`:`Enter an amount from ${money(MIN_B)} to ${money(MAX_B)}.`;b.disabled=true;return}
+ h.className="hint";b.disabled=false;
+ h.textContent=`About ${money(maxFood(d))} of your ${money(d)} is available for food. The rest covers taxes, delivery and platform fee.`;
+}
+function setQty(id,delta){
+ if(!byId(id))return;
+ const q=Math.min(MAXQ,Math.max(0,(S.cart[id]||0)+delta));
+ if(q)S.cart[id]=q;else delete S.cart[id];
+}
+function act(a,d){
+ switch(a){
+  case "pick":S.sel=d.v==="custom"?"custom":+d.v;render();if(S.sel==="custom"){const i=$("#cust");if(i)i.focus()}break;
+  case "build":{const v=draft();if(v===null)return;S.budget=v;S.recs=null;go("menu");break}
+  case "setup":go("setup");break;
+  case "inc":setQty(d.id,1);render();break;
+  case "dec":setQty(d.id,-1);render();break;
+  case "filter":S.filter=CATS.includes(d.v)?d.v:"All";render();break;
+  case "sort":S.sortLow=!S.sortLow;render();break;
+  case "sheet":S.sheet=!S.sheet;render();break;
+  case "find":doFind();break;
+  case "findcart":go("menu");doFind();break;
+  case "apply":{const r=S.recs&&S.recs.list[+d.i];if(!r)return;S.cart=Object.assign({},r.cart);render();toast(`Added to cart. Total ${money(r.t.total)}, within your budget.`);break}
+  case "raise":{const v=+d.v;if(!(v>=MIN_B&&v<=MAX_B))return;S.budget=v;S.sel=[150,250,350].includes(v)?v:"custom";S.custom=String(v);S.recs=null;render();toast(`Budget updated to ${money(v)}.`);break}
+  case "cart":go("cart");break;
+  case "menu":go("menu");break;
+  case "clear":S.cart={};render();toast("Cart cleared.");break;
+  case "checkout":{const t=calc(S.cart);if(!t.count){toast("Your cart is empty.",1);return}if(!fits(t)){toast("Over budget. Edit your cart or raise the budget.",1);return}S.order={cart:Object.assign({},S.cart),t,budget:S.budget};go("done");break}
+  case "newmenu":S.cart={};S.order=null;S.recs=null;go("menu");break;
+  case "newsetup":S.cart={};S.order=null;S.recs=null;go("setup");break;
+ }
+}
+function doFind(){
+ S.recs=recommend(S.budget);render();
+ const f=$("#find");if(f)f.scrollIntoView({behavior:"smooth",block:"nearest"});
+ $("#live").textContent=S.recs.list.length?`${S.recs.list.length} combinations found within budget.`:"No combination fits this budget.";
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-a]");if(!b||b.disabled)return;act(b.dataset.a,b.dataset)});
+document.addEventListener("input",e=>{if(e.target.id==="cust"){S.custom=e.target.value.replace(/\D/g,"").slice(0,4);e.target.value=S.custom;updSetup()}});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.id==="cust")act("build",{})});
+render();
+})();
+</script>
+</body>
+</html>
